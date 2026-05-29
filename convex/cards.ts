@@ -28,6 +28,16 @@ export const save = mutation({
     color: v.string(),
   },
   handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("cards")
+      .withIndex("by_card_id", (q) => q.eq("id", args.id))
+      .unique();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, { ...args, updatedAt: Date.now() });
+      return existing._id;
+    }
+
     return await ctx.db.insert("cards", { ...args, updatedAt: Date.now() });
   },
 });

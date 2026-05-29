@@ -31,5 +31,7 @@ export default defineSchema({
     imageSource: v.optional(v.string()),
     color: v.string(),
     updatedAt: v.number(),
-  }).index("by_updated", ["updatedAt"]),
+  })
+    .index("by_updated", ["updatedAt"])
+    .index("by_card_id", ["id"]),
 });
