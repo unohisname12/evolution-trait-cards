@@ -14,6 +14,14 @@ import {
 } from "lucide-react";
 import "./App.css";
 import { animals, lineages, type Animal } from "./catalog";
+import {
+  AccessibilityBar,
+  NeedHelp,
+  ProgressPanel,
+  SentenceStarters,
+  useSpeech,
+  useSupportSettings,
+} from "./student-support";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 
@@ -194,6 +202,9 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const cardRef = useRef<HTMLElement>(null);
+  const certRef = useRef<HTMLElement>(null);
+  const { settings, update, rootClass, rootStyle } = useSupportSettings();
+  const speech = useSpeech();
   const convexCards = useQuery(api.cards.list) as StoredCard[] | undefined;
   const saveConvexCard = useMutation(api.cards.save);
   const removeConvexCard = useMutation(api.cards.remove);
@@ -307,6 +318,23 @@ function App() {
     reader.readAsDataURL(file);
   };
 
+  const insertStarter = (field: "claim" | "evidence" | "reasoning", text: string) => {
+    setDraft((current) => {
+      const existing = current[field];
+      const next = existing.trim() ? `${existing.trimEnd()} ${text}` : text;
+      return { ...current, [field]: next };
+    });
+  };
+
+  const downloadCertificate = async () => {
+    if (!certRef.current) return;
+    const dataUrl = await toPng(certRef.current, { cacheBust: true, pixelRatio: 2, backgroundColor: "#fffdf7" });
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `${previewDraft.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-cer-certificate.png`;
+    link.click();
+  };
+
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(savedCards, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -318,13 +346,21 @@ function App() {
   };
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${rootClass}`.trim()} style={rootStyle}>
       <header className="topbar">
         <div>
           <p className="eyebrow">CER evolution card builder</p>
           <h1>Trait Deck</h1>
         </div>
         <div className="topbar-actions">
+          <NeedHelp
+            context={{ animalName: selectedAnimal.name, sharedTrait: draft.sharedTrait, adaptation: draft.adaptation }}
+            speak={speech.speak}
+            stop={speech.stop}
+            speaking={speech.speaking}
+            supported={speech.supported}
+          />
+          <AccessibilityBar settings={settings} update={update} />
           <button type="button" onClick={loadExample}>
             <BookOpen size={18} /> Load example
           </button>
@@ -388,6 +424,19 @@ function App() {
         </aside>
 
         <section className="builder">
+          <ProgressPanel
+            input={{
+              environment: draft.environment,
+              sharedTrait: draft.sharedTrait,
+              adaptation: draft.adaptation,
+              claim: draft.claim,
+              evidence: draft.evidence,
+              reasoning: draft.reasoning,
+              connectionNote: draft.connectionNote,
+            }}
+            savedCount={savedCards.length}
+            onCertificate={downloadCertificate}
+          />
           <div className="editor">
             <div className="editor-head">
               <div>
@@ -410,7 +459,7 @@ function App() {
               Time period
               <input value={draft.period} onChange={(event) => setDraft({ ...draft, period: event.target.value })} />
             </label>
-            <label>
+            <label data-step="environment">
               Environment
               <input
                 value={draft.environment}
@@ -418,7 +467,7 @@ function App() {
                 placeholder={`Research where ${selectedAnimal.name} lives or lived`}
               />
             </label>
-            <label>
+            <label data-step="sharedTrait">
               Shared trait from common ancestors
               <textarea
                 value={draft.sharedTrait}
@@ -426,7 +475,7 @@ function App() {
                 placeholder="What body part, bone pattern, DNA trait, or system is similar to a related animal?"
               />
             </label>
-            <label>
+            <label data-step="adaptation">
               Adaptation for its environment
               <textarea
                 value={draft.adaptation}
@@ -434,7 +483,7 @@ function App() {
                 placeholder="What trait helps it survive where it lives?"
               />
             </label>
-            <label>
+            <label data-step="claim">
               Claim
               <textarea
                 value={draft.claim}
@@ -442,7 +491,8 @@ function App() {
                 placeholder="What are you trying to prove about shared traits and differences?"
               />
             </label>
-            <label>
+            <SentenceStarters kind="claim" onInsert={(text) => insertStarter("claim", text)} />
+            <label data-step="evidence">
               Evidence
               <textarea
                 value={draft.evidence}
@@ -450,6 +500,7 @@ function App() {
                 placeholder="What fact, fossil, body structure, or DNA comparison did you find?"
               />
             </label>
+            <SentenceStarters kind="evidence" onInsert={(text) => insertStarter("evidence", text)} />
             <section className={connectionUnlocked ? "connection-game unlocked" : "connection-game"}>
               <div>
                 <p className="eyebrow">connection challenge</p>
@@ -493,7 +544,7 @@ function App() {
                 <Sparkles size={18} /> Make connection
               </button>
             </section>
-            <label>
+            <label data-step="reasoning">
               Reasoning
               <textarea
                 value={draft.reasoning}
@@ -501,6 +552,7 @@ function App() {
                 placeholder="Explain how your evidence supports common ancestors and adaptation."
               />
             </label>
+            <SentenceStarters kind="reasoning" onInsert={(text) => insertStarter("reasoning", text)} />
             <label>
               Image URL
               <input
@@ -598,6 +650,16 @@ function App() {
             Pick an animal, edit the CER details, then save it here for printing.
           </div>
         )}
+      </section>
+
+      <section ref={certRef} className="certificate-export" aria-hidden="true">
+        <p className="cert-eyebrow">Trait Deck · CER Evolution</p>
+        <h2>Certificate of Completion</h2>
+        <p className="cert-body">
+          completed a full Claim · Evidence · Reasoning card for
+        </p>
+        <p className="cert-name">{previewDraft.name}</p>
+        <p className="cert-foot">Trait Detective &nbsp;·&nbsp; Evolution Explorer &nbsp;·&nbsp; CER Master</p>
       </section>
     </main>
   );
