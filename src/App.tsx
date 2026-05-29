@@ -96,7 +96,7 @@ const chimpExampleDraft = (): CardDraft => ({
   name: "Chimpanzee",
   title: "Example partner card",
   period: "Modern",
-  connectionAnimal: "Human",
+  connectionAnimal: "Nikola Jokić",
   connectionNote:
     "Same: chimpanzees and humans have hands, forward-facing eyes, hair, and similar skeletons. Different: chimpanzees climb more, have longer arms, and often knuckle-walk.",
   environment: "Tropical forests and woodlands",

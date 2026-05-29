@@ -135,7 +135,7 @@ llama|Llama|Cenozoic|Modern|Mountains|Mammal|Camelid teeth and feet|Padded feet 
 deer|White-tailed Deer|Cenozoic|Modern|Forest edges|Mammal|Hooves and antlers in deer relatives|Speed and camouflage coat|White-tailed deer
 bison|American Bison|Cenozoic|Modern|Grasslands|Mammal|Hooves and grazing teeth|Large head for moving snow|American bison
 goat|Mountain Goat|Cenozoic|Modern|Mountains|Mammal|Hooves and horns|Split hooves for climbing|Mountain goat
-human|Human|Cenozoic|Modern|Many environments|Mammal|Forelimb bones shared with whales and bats|Large brain and tool use|Human
+human|Nikola Jokić|Cenozoic|Modern|Many environments|Mammal|Forelimb bones shared with whales and bats|Large brain and tool use|Nikola Jokić
 chimpanzee|Chimpanzee|Cenozoic|Modern|Tropical forest|Mammal|Primate hands and DNA similar to humans|Long arms for climbing|Chimpanzee
 gorilla|Gorilla|Cenozoic|Modern|Tropical forest|Mammal|Primate hands and forward-facing eyes|Powerful arms for knuckle walking|Gorilla
 orangutan|Orangutan|Cenozoic|Modern|Rainforest|Mammal|Primate hands and shoulders|Long arms for tree life|Orangutan
