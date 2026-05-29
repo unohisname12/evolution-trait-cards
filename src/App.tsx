@@ -359,6 +359,8 @@ function App() {
             stop={speech.stop}
             speaking={speech.speaking}
             supported={speech.supported}
+            startersOn={settings.showStarters}
+            onToggleStarters={(on) => update("showStarters", on)}
           />
           <AccessibilityBar settings={settings} update={update} />
           <button type="button" onClick={loadExample}>
@@ -491,7 +493,7 @@ function App() {
                 placeholder="What are you trying to prove about shared traits and differences?"
               />
             </label>
-            <SentenceStarters kind="claim" onInsert={(text) => insertStarter("claim", text)} />
+            {settings.showStarters ? <SentenceStarters kind="claim" onInsert={(text) => insertStarter("claim", text)} /> : null}
             <label data-step="evidence">
               Evidence
               <textarea
@@ -500,7 +502,7 @@ function App() {
                 placeholder="What fact, fossil, body structure, or DNA comparison did you find?"
               />
             </label>
-            <SentenceStarters kind="evidence" onInsert={(text) => insertStarter("evidence", text)} />
+            {settings.showStarters ? <SentenceStarters kind="evidence" onInsert={(text) => insertStarter("evidence", text)} /> : null}
             <section className={connectionUnlocked ? "connection-game unlocked" : "connection-game"}>
               <div>
                 <p className="eyebrow">connection challenge</p>
@@ -552,7 +554,7 @@ function App() {
                 placeholder="Explain how your evidence supports common ancestors and adaptation."
               />
             </label>
-            <SentenceStarters kind="reasoning" onInsert={(text) => insertStarter("reasoning", text)} />
+            {settings.showStarters ? <SentenceStarters kind="reasoning" onInsert={(text) => insertStarter("reasoning", text)} /> : null}
             <label>
               Image URL
               <input

@@ -25,6 +25,7 @@ export type SupportSettings = {
   focusMode: boolean;
   dyslexiaFont: boolean;
   reduceMotion: boolean;
+  showStarters: boolean;
   textScale: number; // 1 = default
 };
 
@@ -33,6 +34,7 @@ const DEFAULT_SETTINGS: SupportSettings = {
   focusMode: false,
   dyslexiaFont: false,
   reduceMotion: false,
+  showStarters: false,
   textScale: 1,
 };
 
@@ -158,6 +160,7 @@ export function AccessibilityBar({
           <Toggle label="Simple Mode" hint="One step at a time, less clutter" value={settings.simpleMode} onChange={(v) => update("simpleMode", v)} />
           <Toggle label="Focus Mode" hint="Dim everything but the current part" value={settings.focusMode} onChange={(v) => update("focusMode", v)} />
           <Toggle label="Dyslexia-friendly font" hint="Wider spacing, clearer letters" value={settings.dyslexiaFont} onChange={(v) => update("dyslexiaFont", v)} />
+          <Toggle label="Sentence starters" hint="Show click-to-fill starter buttons" value={settings.showStarters} onChange={(v) => update("showStarters", v)} />
           <Toggle label="Reduce motion" hint="Turn off animations" value={settings.reduceMotion} onChange={(v) => update("reduceMotion", v)} />
           <div className="a11y-size">
             <span>Text size</span>
@@ -217,12 +220,14 @@ const HELP_STEPS = [
 const CER_REMINDER =
   "CER means Claim, Evidence, Reasoning. Claim: what you think is true. Evidence: a fact or observation that proves it. Reasoning: your explanation of how the evidence supports the claim.";
 
-export function NeedHelp({ context, speak, stop, speaking, supported }: {
+export function NeedHelp({ context, speak, stop, speaking, supported, startersOn, onToggleStarters }: {
   context: HelpContext;
   speak: (text: string) => void;
   stop: () => void;
   speaking: boolean;
   supported: boolean;
+  startersOn: boolean;
+  onToggleStarters: (on: boolean) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [topic, setTopic] = useState<string | null>(null);
@@ -235,7 +240,7 @@ export function NeedHelp({ context, speak, stop, speaking, supported }: {
     { key: "aloud", label: "Read Instructions Aloud", text: HELP_STEPS.join(". ") },
     { key: "simpler", label: "Explain This Simpler", text: explainSimpler },
     { key: "example", label: "Give Me an Example", text: giveExample },
-    { key: "starters", label: "Show Sentence Starters", text: "Look under each writing box for blue Sentence starter buttons. Click one and it drops the words into your answer so you only finish the sentence." },
+    { key: "starters", label: startersOn ? "Hide Sentence Starters" : "Show Sentence Starters", text: startersOn ? "Sentence starters are ON. Blue starter buttons show under Claim, Evidence, and Reasoning. Click one to drop the words in, then finish the sentence. Use this button again to hide them and get more room to write." : "Sentence starters are now ON. Blue starter buttons appear under Claim, Evidence, and Reasoning. Click one to drop the words in, then finish the sentence." },
     { key: "steps", label: "Break This Into Steps", text: HELP_STEPS.map((s, i) => `${i + 1}. ${s}`).join("\n") },
     { key: "cer", label: "Remind Me What CER Means", text: CER_REMINDER },
   ];
@@ -262,6 +267,7 @@ export function NeedHelp({ context, speak, stop, speaking, supported }: {
                 onClick={() => {
                   setTopic(t.key);
                   if (t.key === "aloud") speak(t.text);
+                  if (t.key === "starters") onToggleStarters(!startersOn);
                 }}
               >
                 {t.label}
