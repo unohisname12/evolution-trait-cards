@@ -424,20 +424,20 @@ function App() {
         </aside>
 
         <section className="builder">
-          <ProgressPanel
-            input={{
-              environment: draft.environment,
-              sharedTrait: draft.sharedTrait,
-              adaptation: draft.adaptation,
-              claim: draft.claim,
-              evidence: draft.evidence,
-              reasoning: draft.reasoning,
-              connectionNote: draft.connectionNote,
-            }}
-            savedCount={savedCards.length}
-            onCertificate={downloadCertificate}
-          />
           <div className="editor">
+            <ProgressPanel
+              input={{
+                environment: draft.environment,
+                sharedTrait: draft.sharedTrait,
+                adaptation: draft.adaptation,
+                claim: draft.claim,
+                evidence: draft.evidence,
+                reasoning: draft.reasoning,
+                connectionNote: draft.connectionNote,
+              }}
+              savedCount={savedCards.length}
+              onCertificate={downloadCertificate}
+            />
             <div className="editor-head">
               <div>
                 <p className="eyebrow">student research workspace</p>
